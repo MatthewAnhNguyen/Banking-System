@@ -1,10 +1,9 @@
-package com.banking.oop.domain;
+package com.banking.oop.domain.entity;
 
+import com.banking.oop.domain.enums.TransactionStatus;
+import com.banking.oop.domain.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -16,12 +15,14 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false, length = 50)
-    private String transactionType;
+    private TransactionType transactionType;
 
     @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
@@ -30,8 +31,9 @@ public class Transaction {
     @Column(name = "transaction_date", updatable = false)
     private LocalDateTime transactionDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
-    private String status;
+    private TransactionStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_account_id")

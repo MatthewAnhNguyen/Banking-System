@@ -1,6 +1,6 @@
-package com.banking.oop.Repository;
+package com.banking.oop.domain.Repository;
 
-import com.banking.oop.domain.Transaction;
+import com.banking.oop.domain.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +12,6 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findBySourceAccountId(Long id);
     List<Transaction> findByTargetAccountId(Long id);
-
     @Query("Select t from Transaction t WHERE t.sourceAccount.id = :accountId OR t.targetAccount.id = :accountId")
     List<Transaction> findAllTransactionsByAccountId(@Param("accountId")Long accountId);
 }
