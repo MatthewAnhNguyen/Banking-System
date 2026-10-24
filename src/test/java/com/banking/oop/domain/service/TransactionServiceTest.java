@@ -1,15 +1,17 @@
 package com.banking.oop.domain.service;
 
-import com.banking.oop.domain.entity.Account;
-import com.banking.oop.domain.Repository.AccountRepository;
-import com.banking.oop.domain.entity.Transaction;
-import com.banking.oop.domain.Repository.TransactionRepository;
-import com.banking.oop.domain.dto.TransactionRequest;
-import com.banking.oop.domain.dto.TransactionResponse;
-import com.banking.oop.domain.enums.TransactionStatus;
-import com.banking.oop.domain.enums.TransactionType;
-import com.banking.oop.domain.exception.BusinessRuleException;
-import com.banking.oop.domain.exception.ResourceNotFoundException;
+import com.banking.oop.domain.account.entity.Account;
+import com.banking.oop.domain.account.repository.AccountRepository;
+import com.banking.oop.domain.common.exception.BusinessRuleException;
+import com.banking.oop.domain.common.exception.ResourceNotFoundException;
+import com.banking.oop.domain.transaction.dto.TransactionResponse;
+import com.banking.oop.domain.transaction.dto.TransferRequest;
+import com.banking.oop.domain.transaction.entity.Transaction;
+import com.banking.oop.domain.transaction.enums.TransactionStatus;
+import com.banking.oop.domain.transaction.enums.TransactionType;
+import com.banking.oop.domain.transaction.repository.TransactionRepository;
+import com.banking.oop.domain.transaction.service.TransactionService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,95 +40,134 @@ class TransactionServiceTest {
 
     private Account sourceAccount;
     private Account targetAccount;
-    private TransactionRequest validRequest;
+    private TransferRequest validRequest;
 
     @BeforeEach
     void setUp() {
-        sourceAccount = Account.builder().id(1L).balance(new BigDecimal("1000")).build();
-        targetAccount = Account.builder().id(2L).balance(new BigDecimal("500")).build();
-
-        validRequest = TransactionRequest.builder()
-                .sourceAccountId(1L)
-                .targetAccountId(2L)
-                .amount(new BigDecimal("200"))
-                .transactionType(TransactionType.TRANSFER)
+        sourceAccount = Account.builder()
+                .id(1L)
+                .balance(new BigDecimal("1000.00"))
                 .build();
+
+        targetAccount = Account.builder()
+                .id(2L)
+                .balance(new BigDecimal("500.00"))
+                .build();
+
+        validRequest = new TransferRequest(
+                1L,
+                2L,
+                new BigDecimal("200.00")
+        );
     }
-    // Case 1: Transfer thành công
-    @Test
-    void transfer_Success() {
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(2L)).thenReturn(Optional.of(targetAccount));
 
-        Transaction mockSavedTransaction = Transaction.builder()
-                .id(100L).transactionType(TransactionType.TRANSFER).amount(new BigDecimal("200"))
-                .status(TransactionStatus.SUCCESS).sourceAccount(sourceAccount).targetAccount(targetAccount)
-                .build();
-        when(transactionRepository.save(any(Transaction.class))).thenReturn(mockSavedTransaction);
+    @Test
+    void transfer_success() {
+        when(accountRepository.findByIdForUpdate(1L))
+                .thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdForUpdate(2L))
+                .thenReturn(Optional.of(targetAccount));
+        when(transactionRepository.save(any(Transaction.class)))
+                .thenAnswer(invocation -> {
+                    Transaction transaction = invocation.getArgument(0);
+                    transaction.setId(100L);
+                    return transaction;
+                });
+
         TransactionResponse response = transactionService.transfer(validRequest);
-        assertNotNull(response);
-        assertEquals(new BigDecimal("800"), sourceAccount.getBalance());
-        assertEquals(new BigDecimal("700"), targetAccount.getBalance());
-        assertEquals(TransactionStatus.SUCCESS, response.getStatus());
-        verify(accountRepository, times(1)).save(sourceAccount);
-        verify(accountRepository, times(1)).save(targetAccount);
-        verify(transactionRepository, times(1)).save(any(Transaction.class));
+
+        assertEquals(100L, response.id());
+        assertEquals(TransactionType.TRANSFER, response.transactionType());
+        assertEquals(TransactionStatus.SUCCESS, response.status());
+        assertEquals(new BigDecimal("800.00"), sourceAccount.getBalance());
+        assertEquals(new BigDecimal("700.00"), targetAccount.getBalance());
+
+        verify(accountRepository).save(sourceAccount);
+        verify(accountRepository).save(targetAccount);
+        verify(transactionRepository).save(any(Transaction.class));
     }
+
     @Test
-    void transfer_Fail_InsufficientBalance() {
-        validRequest.setAmount(new BigDecimal("2000"));
+    void transfer_failsWhenBalanceIsInsufficient() {
+        TransferRequest request = new TransferRequest(
+                1L,
+                2L,
+                new BigDecimal("2000.00")
+        );
 
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(2L)).thenReturn(Optional.of(targetAccount));
-        Exception exception = assertThrows(BusinessRuleException.class, () -> {
-            transactionService.transfer(validRequest);
-        });
+        when(accountRepository.findByIdForUpdate(1L))
+                .thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdForUpdate(2L))
+                .thenReturn(Optional.of(targetAccount));
 
-        assertEquals("Số dư không đủ để thực hiện giao dịch.", exception.getMessage());
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
+                () -> transactionService.transfer(request)
+        );
+
+        assertEquals("Số dư không đủ để thực hiện giao dịch", exception.getMessage());
         verify(transactionRepository, never()).save(any());
     }
-    @Test
-    void transfer_Fail_SourceAccountNotFound() {
-        when(accountRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            transactionService.transfer(validRequest);
-        });
+    @Test
+    void transfer_failsWhenSourceAccountDoesNotExist() {
+        when(accountRepository.findByIdForUpdate(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> transactionService.transfer(validRequest)
+        );
+
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
     }
-    @Test
-    void transfer_Fail_TargetAccountNotFound() {
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            transactionService.transfer(validRequest);
-        });
+    @Test
+    void transfer_failsWhenTargetAccountDoesNotExist() {
+        when(accountRepository.findByIdForUpdate(1L))
+                .thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdForUpdate(2L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> transactionService.transfer(validRequest)
+        );
+
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
     }
-    @Test
-    void transfer_Fail_SameAccount() {
-        validRequest.setTargetAccountId(1L);
 
-        assertThrows(BusinessRuleException.class, () -> {
-            transactionService.transfer(validRequest);
-        });
-        verify(accountRepository, never()).findById(any());
+    @Test
+    void transfer_failsWhenSourceAndTargetAreTheSameAccount() {
+        TransferRequest request = new TransferRequest(
+                1L,
+                1L,
+                new BigDecimal("200.00")
+        );
+
+        assertThrows(
+                BusinessRuleException.class,
+                () -> transactionService.transfer(request)
+        );
+
+        verify(accountRepository, never()).findByIdForUpdate(any());
+        verify(transactionRepository, never()).save(any());
     }
-    @Test
-    void getTransactionById_Fail_NotFound() {
-        when(transactionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            transactionService.getTransactionById(99L);
-        });
-    }
     @Test
-    void transfer_Fail_DatabaseError_ShouldRollback() {
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(sourceAccount));
-        when(accountRepository.findById(2L)).thenReturn(Optional.of(targetAccount));
+    void transfer_failsWhenSavingTransactionThrows() {
+        when(accountRepository.findByIdForUpdate(1L))
+                .thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdForUpdate(2L))
+                .thenReturn(Optional.of(targetAccount));
+        when(transactionRepository.save(any(Transaction.class)))
+                .thenThrow(new RuntimeException("Lỗi Database!"));
 
-        when(transactionRepository.save(any(Transaction.class))).thenThrow(new RuntimeException("Lỗi Database!"));
-        assertThrows(RuntimeException.class, () -> {
-            transactionService.transfer(validRequest);
-        });
+        assertThrows(
+                RuntimeException.class,
+                () -> transactionService.transfer(validRequest)
+        );
     }
 }

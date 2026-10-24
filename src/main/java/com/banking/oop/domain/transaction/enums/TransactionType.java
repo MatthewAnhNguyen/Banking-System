@@ -1,4 +1,4 @@
-package com.banking.oop.domain.enums;
+package com.banking.oop.domain.transaction.enums;
 
 public enum TransactionType {
     TRANSFER,

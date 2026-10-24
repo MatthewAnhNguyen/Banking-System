@@ -1,7 +1,8 @@
-package com.banking.oop.domain.entity;
+package com.banking.oop.domain.transaction.entity;
 
-import com.banking.oop.domain.enums.TransactionStatus;
-import com.banking.oop.domain.enums.TransactionType;
+import com.banking.oop.domain.account.entity.Account;
+import com.banking.oop.domain.transaction.enums.TransactionStatus;
+import com.banking.oop.domain.transaction.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,19 +21,20 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false, length = 50)
+    @Column(name = "transaction_type", nullable = false, length = 30)
     private TransactionType transactionType;
 
     @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
     @CreationTimestamp
-    @Column(name = "transaction_date", updatable = false)
+    @Column(name = "transaction_date", nullable = false, updatable = false)
     private LocalDateTime transactionDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 50)
+    @Column(name = "status", nullable = false, length = 20)
     private TransactionStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
