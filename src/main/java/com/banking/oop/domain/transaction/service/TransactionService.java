@@ -1,14 +1,15 @@
 package com.banking.oop.domain.transaction.service;
 
 import com.banking.oop.domain.account.entity.Account;
+import com.banking.oop.domain.account.entity.AccountStatus;
 import com.banking.oop.domain.account.repository.AccountRepository;
+import com.banking.oop.domain.account.service.AccountService;
 import com.banking.oop.domain.common.exception.BusinessRuleException;
 import com.banking.oop.domain.common.exception.ResourceNotFoundException;
 import com.banking.oop.domain.transaction.dto.AccountTransactionRequest;
 import com.banking.oop.domain.transaction.dto.TransactionResponse;
 import com.banking.oop.domain.transaction.dto.TransferRequest;
 import com.banking.oop.domain.transaction.entity.Transaction;
-import com.banking.oop.domain.transaction.enums.TransactionStatus;
 import com.banking.oop.domain.transaction.enums.TransactionType;
 import com.banking.oop.domain.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,116 +22,93 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class TransactionService {
     private final AccountRepository accountRepository;
+    private final AccountService accountService;
     private final TransactionRepository transactionRepository;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TransactionResponse deposit(AccountTransactionRequest request) {
-        validateAmount(request.amount());
-
-        Account target = getAccountForUpdate(request.accountId());
-        target.setBalance(balanceOf(target).add(request.amount()));
-        accountRepository.save(target);
-
-        return saveTransaction(
-                TransactionType.DEPOSIT,
-                request.amount(),
-                null,
-                target
-        );
+        Account target = ownedAccountForUpdate(request.accountNumber());
+        ensureActive(target);
+        target.setBalance(target.getBalance().add(request.amount()));
+        return save(TransactionType.DEPOSIT, request.amount(), null, target);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TransactionResponse withdraw(AccountTransactionRequest request) {
-        validateAmount(request.amount());
-
-        Account source = getAccountForUpdate(request.accountId());
-        BigDecimal balance = balanceOf(source);
-
-        if (balance.compareTo(request.amount()) < 0) {
-            throw new BusinessRuleException("Số dư không đủ để thực hiện giao dịch");
-        }
-
-        source.setBalance(balance.subtract(request.amount()));
-        accountRepository.save(source);
-
-        return saveTransaction(
-                TransactionType.WITHDRAWAL,
-                request.amount(),
-                source,
-                null
-        );
+        Account source = ownedAccountForUpdate(request.accountNumber());
+        ensureActive(source);
+        ensureSufficientBalance(source, request.amount());
+        source.setBalance(source.getBalance().subtract(request.amount()));
+        return save(TransactionType.WITHDRAWAL, request.amount(), source, null);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TransactionResponse transfer(TransferRequest request) {
-        validateAmount(request.amount());
-
-        if (request.sourceAccountId().equals(request.targetAccountId())) {
-            throw new BusinessRuleException(
-                    "Tài khoản nguồn và đích không được trùng nhau"
-            );
+        if (request.sourceAccountNumber().equals(request.targetAccountNumber())) {
+            throw new BusinessRuleException("Tài khoản nguồn và đích không được trùng nhau");
         }
 
-        // Khóa theo ID tăng dần để giảm nguy cơ deadlock khi chuyển tiền hai chiều.
-        Long firstId = Math.min(request.sourceAccountId(), request.targetAccountId());
-        Long secondId = Math.max(request.sourceAccountId(), request.targetAccountId());
+        Account sourceRef = accountRepository.findByAccountNumber(request.sourceAccountNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản nguồn"));
+        Account targetRef = accountRepository.findByAccountNumber(request.targetAccountNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản đích"));
 
-        Account first = getAccountForUpdate(firstId);
-        Account second = getAccountForUpdate(secondId);
+        Long firstId = Math.min(sourceRef.getId(), targetRef.getId());
+        Long secondId = Math.max(sourceRef.getId(), targetRef.getId());
+        Account first = lock(firstId);
+        Account second = lock(secondId);
 
-        Account source = first.getId().equals(request.sourceAccountId()) ? first : second;
-        Account target = first.getId().equals(request.targetAccountId()) ? first : second;
+        Account source = first.getId().equals(sourceRef.getId()) ? first : second;
+        Account target = first.getId().equals(targetRef.getId()) ? first : second;
 
-        BigDecimal sourceBalance = balanceOf(source);
-        if (sourceBalance.compareTo(request.amount()) < 0) {
+        if (!source.getUser().getId().equals(accountService.currentUserId())) {
+            throw new ResourceNotFoundException("Không tìm thấy tài khoản nguồn");
+        }
+        ensureActive(source);
+        ensureActive(target);
+        ensureSufficientBalance(source, request.amount());
+
+        source.setBalance(source.getBalance().subtract(request.amount()));
+        target.setBalance(target.getBalance().add(request.amount()));
+        return save(TransactionType.TRANSFER, request.amount(), source, target);
+    }
+
+    private Account ownedAccountForUpdate(String accountNumber) {
+        return accountRepository.findByNumberAndUserForUpdate(
+                        accountNumber,
+                        accountService.currentUserId()
+                )
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản"));
+    }
+
+    private Account lock(Long id) {
+        return accountRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản"));
+    }
+
+    private void ensureActive(Account account) {
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new BusinessRuleException("Tài khoản không hoạt động");
+        }
+    }
+
+    private void ensureSufficientBalance(Account account, BigDecimal amount) {
+        if (account.getBalance().compareTo(amount) < 0) {
             throw new BusinessRuleException("Số dư không đủ để thực hiện giao dịch");
         }
-
-        source.setBalance(sourceBalance.subtract(request.amount()));
-        target.setBalance(balanceOf(target).add(request.amount()));
-
-        accountRepository.save(source);
-        accountRepository.save(target);
-
-        return saveTransaction(
-                TransactionType.TRANSFER,
-                request.amount(),
-                source,
-                target
-        );
     }
 
-    private Account getAccountForUpdate(Long accountId) {
-        return accountRepository.findByIdForUpdate(accountId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Không tìm thấy tài khoản với ID: " + accountId
-                ));
-    }
-
-    private void validateAmount(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BusinessRuleException("Số tiền giao dịch phải lớn hơn 0");
-        }
-    }
-
-    private BigDecimal balanceOf(Account account) {
-        return account.getBalance() == null ? BigDecimal.ZERO : account.getBalance();
-    }
-
-    private TransactionResponse saveTransaction(
+    private TransactionResponse save(
             TransactionType type,
             BigDecimal amount,
             Account source,
             Account target
     ) {
-        Transaction transaction = Transaction.builder()
-                .transactionType(type)
-                .amount(amount)
-                .status(TransactionStatus.SUCCESS)
-                .sourceAccount(source)
-                .targetAccount(target)
-                .build();
-
+        Transaction transaction = new Transaction();
+        transaction.setTransactionType(type);
+        transaction.setAmount(amount);
+        transaction.setSourceAccount(source);
+        transaction.setTargetAccount(target);
         return toResponse(transactionRepository.save(transaction));
     }
 
@@ -142,11 +120,9 @@ public class TransactionService {
                 transaction.getTransactionDate(),
                 transaction.getStatus(),
                 transaction.getSourceAccount() == null
-                        ? null
-                        : transaction.getSourceAccount().getId(),
+                        ? null : transaction.getSourceAccount().getAccountNumber(),
                 transaction.getTargetAccount() == null
-                        ? null
-                        : transaction.getTargetAccount().getId()
+                        ? null : transaction.getTargetAccount().getAccountNumber()
         );
     }
 }

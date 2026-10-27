@@ -13,17 +13,15 @@ public class HistoryController {
     private final HistoryService historyService;
 
     @GetMapping
-    public Page<HistoryResponse> getCurrentUserHistory(
+    public Page<HistoryResponse> getHistory(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return historyService.getCurrentUserHistory(page, size);
+        return historyService.getHistory(page, size);
     }
 
     @GetMapping("/{transactionId}")
-    public HistoryResponse getCurrentUserTransaction(
-            @PathVariable Long transactionId
-    ) {
-        return historyService.getCurrentUserTransaction(transactionId);
+    public HistoryResponse getTransaction(@PathVariable Long transactionId) {
+        return historyService.getTransaction(transactionId);
     }
 }

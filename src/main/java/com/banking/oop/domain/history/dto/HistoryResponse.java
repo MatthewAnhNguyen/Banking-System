@@ -12,7 +12,7 @@ public record HistoryResponse(
         BigDecimal amount,
         LocalDateTime transactionDate,
         TransactionStatus status,
-        Long sourceAccountId,
-        Long targetAccountId
+        String sourceAccountNumber,
+        String targetAccountNumber
 ) {
 }

@@ -7,7 +7,6 @@ import com.banking.oop.domain.transaction.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,26 +16,20 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/deposit")
-    public ResponseEntity<TransactionResponse> deposit(
-            @Valid @RequestBody AccountTransactionRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(transactionService.deposit(request));
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionResponse deposit(@Valid @RequestBody AccountTransactionRequest request) {
+        return transactionService.deposit(request);
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<TransactionResponse> withdraw(
-            @Valid @RequestBody AccountTransactionRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(transactionService.withdraw(request));
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionResponse withdraw(@Valid @RequestBody AccountTransactionRequest request) {
+        return transactionService.withdraw(request);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransactionResponse> transfer(
-            @Valid @RequestBody TransferRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(transactionService.transfer(request));
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionResponse transfer(@Valid @RequestBody TransferRequest request) {
+        return transactionService.transfer(request);
     }
 }
