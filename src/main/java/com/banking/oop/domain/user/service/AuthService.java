@@ -49,7 +49,9 @@ public class AuthService {
         );
 
         User user = userRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new BusinessRuleException("Thông tin đăng nhập không hợp lệ"));
+                .orElseThrow(() -> new BusinessRuleException(
+                        "Thông tin đăng nhập không hợp lệ"
+                ));
         UserDetails details = userDetailsService.loadUserByUsername(email);
 
         return new AuthResponse(
@@ -58,7 +60,8 @@ public class AuthService {
                 jwtService.getExpirationMs() / 1000,
                 user.getId(),
                 user.getUsername(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole().name()
         );
     }
 }
