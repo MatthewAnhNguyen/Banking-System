@@ -1,62 +1,73 @@
 
-## Yêu cầu
+## Cấu trúc thư mục dự án
 
+Dự án được phân chia thành 2 phần độc lập:
+- `backend/`: Chứa toàn bộ mã nguồn Java Spring Boot, cấu hình Maven (`pom.xml`, `mvnw`), `Dockerfile` của backend.
+- `frontend/`: Chứa mã nguồn giao diện React (Vite + TypeScript), package manager config (`package.json`), v.v.
+
+---
+
+## 1. Hướng dẫn chạy Backend
+
+Mở terminal và di chuyển vào thư mục `backend`:
+```bash
+cd backend
+```
+
+**Yêu cầu:**
 - JDK 25
-- Git
-- OpenSSL để tạo JWT secret
-- Maven Wrapper đi kèm repository
+- Maven Wrapper đi kèm (Maven 3.9.16)
 
-Maven Wrapper được cấu hình để tải Maven `3.9.16`. Khi khởi động lần đầu, cần có kết nối Internet để tải Maven và dependencies.
-
-## Cấu hình
-
-**Tạo JWT secret:**
-
+**Cấu hình biến môi trường:**
 ```bash
 openssl rand -base64 32
 ```
-
 Đặt chuỗi vừa tạo vào biến môi trường `JWT_SECRET`.
 
-**PowerShell:**
+**PowerShell (Windows):**
 ```powershell
+cd backend
 $env:JWT_SECRET = "THAY_BANG_CHUOI_BASE64_VUA_TAO"
 $env:JWT_EXPIRATION_MS = "86400000"
-```
-
-**Nếu dùng database khác H2, có thể cấu hình thêm:**
-```powershell
-$env:DB_URL = "jdbc:mysql://localhost:3306/banking"
-$env:DB_USERNAME = "your_db_user"
-$env:DB_PASSWORD = "your_db_password"
-```
-> **Lưu ý:** `DB_URL` cần phù hợp với JDBC driver đã khai báo trong POM
-
-## Chạy ứng dụng
-
-Mở terminal tại thư mục chứa `pom.xml`.
-
-**Windows:**
-```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
 **macOS/Linux:**
 ```bash
+cd backend
+export JWT_SECRET="THAY_BANG_CHUOI_BASE64_VUA_TAO"
+export JWT_EXPIRATION_MS="86400000"
 chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 
-Mặc định API chạy tại: `http://localhost:8080`
+Mặc định Backend API chạy tại: `http://localhost:8080`
 
-**Chạy test:**
-```powershell
-# Windows
-.\mvnw.cmd test
+---
 
-# macOS/Linux
-./mvnw test
+## 2. Hướng dẫn chạy Frontend
+
+Mở terminal và di chuyển vào thư mục `frontend`:
+```bash
+cd frontend
+npm install # hoặc: pnpm install
+npm run dev # hoặc: pnpm dev
 ```
+
+Mặc định Frontend chạy tại: `http://localhost:5173`
+
+---
+
+## 3. Khởi chạy bằng Docker Compose (Database & Backend)
+
+Tại thư mục gốc:
+```bash
+docker-compose up --build -d
+```
+
+---
+
+## REST API Backend
 
 ## Xác thực JWT
 
