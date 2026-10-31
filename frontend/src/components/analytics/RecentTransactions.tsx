@@ -82,7 +82,7 @@ export default function RecentTransactions({
       field: "amount",
       headerName: "Amount",
       flex: 1,
-      renderCell: (params) => <>₹{params.value}</>,
+      renderCell: (params) => <>{Number(params.value).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</>,
     },
     {
       field: "transactionDate",

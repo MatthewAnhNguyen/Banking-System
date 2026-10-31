@@ -85,7 +85,7 @@ export default function TransactionTable() {
                 </TableCell>
                 <TableCell>{transaction.transactionType}</TableCell>
                 <TableCell>
-                  ₹ {transaction.amount.toLocaleString("en-IN")}
+                  {transaction.amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
                 </TableCell>
                 <TableCell>
                   <Chip label={transaction.status} color="success" />

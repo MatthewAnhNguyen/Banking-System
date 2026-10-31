@@ -23,30 +23,29 @@ const SummaryCards = ({ summary }: Props) => {
   const cards = [
     {
       title: "Total Balance",
-      value: `₹${summary.totalBalance.toLocaleString()}`,
+      value: summary.totalBalance.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
       icon: <AccountBalanceWallet fontSize="large" />,
       color: "#1976d2",
     },
     {
       title: "Monthly Income",
-      value: `₹${summary.monthlyIncome.toLocaleString()}`,
+      value: summary.monthlyIncome.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
       icon: <TrendingUp fontSize="large" />,
       color: "#2e7d32",
     },
     {
       title: "Monthly Expense",
-      value: `₹${summary.monthlyExpense.toLocaleString()}`,
+      value: summary.monthlyExpense.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
       icon: <TrendingDown fontSize="large" />,
       color: "#d32f2f",
     },
     {
       title: "Savings",
-      value: `₹${summary.savings.toLocaleString()}`,
+      value: summary.savings.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
       icon: <Savings fontSize="large" />,
       color: "#ed6c02",
     },
   ];
-
   return (
     <Grid container spacing={3}>
       {cards.map((card) => (
