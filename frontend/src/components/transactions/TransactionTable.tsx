@@ -43,7 +43,7 @@ export default function TransactionTable({ transactions }: Props) {
                 {new Date(transaction.transactionDate).toLocaleString()}
               </TableCell>
               <TableCell>{transaction.transactionType}</TableCell>
-              <TableCell>₹ {transaction.amount.toLocaleString("en-IN")}</TableCell>
+              <TableCell>{transaction.amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</TableCell>
               <TableCell>
                 <Chip label={transaction.status} color="success" />
               </TableCell>

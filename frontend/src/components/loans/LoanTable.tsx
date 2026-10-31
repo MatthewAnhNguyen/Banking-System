@@ -31,7 +31,7 @@ export default function LoanTable({
       field: "loanAmount",
       headerName: "Amount",
       flex: 1,
-      valueFormatter: (value) => `₹${Number(value).toLocaleString()}`,
+      valueFormatter: (value) => Number(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
     },
     {
       field: "interestRate",
@@ -49,7 +49,7 @@ export default function LoanTable({
       field: "emiAmount",
       headerName: "EMI",
       flex: 1,
-      valueFormatter: (value) => `₹${Number(value).toLocaleString()}`,
+      valueFormatter: (value) => Number(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
     },
     {
       field: "status",

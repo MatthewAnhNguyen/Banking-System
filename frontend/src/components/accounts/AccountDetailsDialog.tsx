@@ -50,7 +50,7 @@ export default function AccountDetailsDialog({
           </Typography>
 
           <Typography>
-            <b>Balance:</b> ₹ {account.balance.toLocaleString("en-IN")}
+            <b>Balance:</b> {account.balance.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
           </Typography>
 
           <Typography>

@@ -11,29 +11,25 @@ export const exportAnalyticsPDF = (
 ) => {
   const doc = new jsPDF();
 
-  // ===== Title =====
   doc.setFontSize(20);
   doc.text("Enterprise Banking System", 14, 20);
 
   doc.setFontSize(15);
   doc.text("Analytics Report", 14, 30);
 
-  // ===== Summary =====
   doc.setFontSize(12);
 
-  doc.text(`Total Balance : ₹${summary.totalBalance}`, 14, 45);
-  doc.text(`Monthly Income : ₹${summary.monthlyIncome}`, 14, 55);
-  doc.text(`Monthly Expense : ₹${summary.monthlyExpense}`, 14, 65);
-  doc.text(`Savings : ₹${summary.savings}`, 14, 75);
+  doc.text(`Total Balance : ${summary.totalBalance.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`, 14, 45);
+  doc.text(`Monthly Income : ${summary.monthlyIncome.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`, 14, 55);
+  doc.text(`Monthly Expense : ${summary.monthlyExpense.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`, 14, 65);
+  doc.text(`Savings : ${summary.savings.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`, 14, 75);
   doc.text(`Transactions : ${summary.totalTransactions}`, 14, 85);
-
-  // ===== Transactions Table =====
   autoTable(doc, {
     startY: 95,
     head: [["Transaction", "Amount", "Date"]],
     body: rows.map((row) => [
       row.type,
-      `₹${row.amount}`,
+      Number(row.amount).toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
       row.transactionDate,
     ]),
   });
