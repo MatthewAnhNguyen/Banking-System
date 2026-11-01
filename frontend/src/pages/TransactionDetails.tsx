@@ -47,20 +47,20 @@ export default function TransactionDetails() {
   }, [id]);
 
   const rows = [
-    ["Transaction ID", transaction ? String(transaction.id) : "-"],
-    ["Transaction Type", transaction?.transactionType ?? "-"],
+    ["Mã giao dịch", transaction ? String(transaction.id) : "-"],
+    ["Loại giao dịch", transaction?.transactionType ?? "-"],
     [
-      "Amount",
+      "Số tiền",
       transaction ? transaction.amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" }) : "-",
     ],
     [
-      "Transaction Date",
+      "Ngày giao dịch",
       transaction
         ? dayjs(transaction.transactionDate).format("DD MMM YYYY, hh:mm A")
         : "-",
     ],
-    ["Source Account", transaction?.sourceAccountNumber ?? "-"],
-    ["Target Account", transaction?.targetAccountNumber ?? "-"],
+    ["Tài khoản nguồn", transaction?.sourceAccountNumber ?? "-"],
+    ["Tài khoản đích", transaction?.targetAccountNumber ?? "-"],
   ];
 
   return (
@@ -70,9 +70,9 @@ export default function TransactionDetails() {
         onClick={() => navigate("/transactions")}
         sx={{ mb: 3 }}
       >
-        Back to Transactions
+        Quay lại danh sách giao dịch
       </Button>
-      {error && <Alert severity="error" sx={{ mb: 2 }}>Transaction could not be loaded.</Alert>}
+      {error && <Alert severity="error" sx={{ mb: 2 }}>Không thể tải thông tin giao dịch.</Alert>}
       <Card>
         <CardContent>
           <Box
@@ -84,7 +84,7 @@ export default function TransactionDetails() {
             mb={3}
           >
             <Typography variant="h5" fontWeight={700}>
-              Transaction Details
+              Chi tiết giao dịch
             </Typography>
             {transaction && <Chip label={transaction.status} color="success" />}
           </Box>
@@ -106,10 +106,10 @@ export default function TransactionDetails() {
                 startIcon={<DownloadIcon />}
                 onClick={() => generateReceipt(transaction)}
               >
-                Download Receipt
+                Tải biên lai
               </Button>
               <Button variant="outlined" onClick={() => window.print()}>
-                Print Receipt
+                In biên lai
               </Button>
             </Box>
           )}

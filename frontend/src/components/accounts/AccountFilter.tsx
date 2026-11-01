@@ -16,19 +16,18 @@ export default function AccountFilter({
 }: Props) {
   return (
     <FormControl fullWidth>
-      <InputLabel>Status</InputLabel>
+      <InputLabel>Trạng thái</InputLabel>
 
       <Select
         value={value}
-        label="Status"
+        label="Trạng thái"
         onChange={(e) =>
           onChange(e.target.value)
         }
       >
-        <MenuItem value="ALL">All</MenuItem>
-        <MenuItem value="ACTIVE">Active</MenuItem>
-        <MenuItem value="BLOCKED">Blocked</MenuItem>
-        <MenuItem value="CLOSED">Closed</MenuItem>
+        <MenuItem value="ALL">Tất cả</MenuItem>
+        <MenuItem value="ACTIVE">Hoạt động</MenuItem>
+        <MenuItem value="BLOCKED">Đã khóa</MenuItem>
       </Select>
     </FormControl>
   );

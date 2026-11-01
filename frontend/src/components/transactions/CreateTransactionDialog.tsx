@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import {
   Dialog,
   DialogTitle,
@@ -43,40 +44,75 @@ export default function CreateTransactionDialog({
   };
 
   const handleSubmit = async () => {
+    const parsedAmount = Number(amount);
+
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      alert("Số tiền phải lớn hơn 0");
+      return;
+    }
+
+    if (
+      (transactionType === "WITHDRAWAL" ||
+        transactionType === "TRANSFER") &&
+      !fromAccount.trim()
+    ) {
+      alert("Vui lòng nhập tài khoản nguồn");
+      return;
+    }
+
+    if (
+      (transactionType === "DEPOSIT" ||
+        transactionType === "TRANSFER") &&
+      !toAccount.trim()
+    ) {
+      alert("Vui lòng nhập tài khoản đích");
+      return;
+    }
+
+    if (
+      transactionType === "TRANSFER" &&
+      fromAccount.trim() === toAccount.trim()
+    ) {
+      alert("Tài khoản nguồn và đích không được trùng nhau");
+      return;
+    }
+
     try {
       switch (transactionType) {
         case "DEPOSIT":
           await deposit({
-            accountNumber: toAccount,
-            amount: Number(amount),
+            accountNumber: toAccount.trim(),
+            amount: parsedAmount,
           });
           break;
 
         case "WITHDRAWAL":
           await withdraw({
-            accountNumber: fromAccount,
-            amount: Number(amount),
+            accountNumber: fromAccount.trim(),
+            amount: parsedAmount,
           });
           break;
 
         case "TRANSFER":
           await transferMoney({
-            sourceAccountNumber: fromAccount,
-            targetAccountNumber: toAccount,
-            amount: Number(amount),
+            sourceAccountNumber: fromAccount.trim(),
+            targetAccountNumber: toAccount.trim(),
+            amount: parsedAmount,
           });
           break;
-
-        default:
-          return;
       }
 
       onSuccess();
       onClose();
       resetForm();
-    } catch (error) {
-      console.error(error);
-      alert("Transaction Failed");
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message ??
+          error.response?.data?.error ??
+          "Giao dịch thất bại"
+        : "Giao dịch thất bại";
+
+      alert(message);
     }
   };
 
@@ -88,36 +124,37 @@ export default function CreateTransactionDialog({
       maxWidth="sm"
     >
       <DialogTitle>
-        New Transaction
+        Giao dịch mới
       </DialogTitle>
 
       <DialogContent>
         <Stack spacing={2} mt={2}>
           <TextField
             select
-            label="Transaction Type"
+            label="Loại giao dịch"
             value={transactionType}
             onChange={(e) =>
               setTransactionType(e.target.value as TransactionType)
             }
           >
             <MenuItem value="DEPOSIT">
-              Deposit
+              Nạp tiền
             </MenuItem>
 
             <MenuItem value="WITHDRAWAL">
-              Withdraw
+              Rút tiền
             </MenuItem>
 
             <MenuItem value="TRANSFER">
-              Transfer
+              Chuyển khoản
             </MenuItem>
           </TextField>
 
           {(transactionType === "WITHDRAWAL" ||
             transactionType === "TRANSFER") && (
             <TextField
-              label="From Account Number"
+              required
+              label="Từ số tài khoản"
               value={fromAccount}
               onChange={(e) =>
                 setFromAccount(e.target.value)
@@ -128,7 +165,8 @@ export default function CreateTransactionDialog({
           {(transactionType === "DEPOSIT" ||
             transactionType === "TRANSFER") && (
             <TextField
-              label="To Account Number"
+              required
+              label="Đến số tài khoản"
               value={toAccount}
               onChange={(e) =>
                 setToAccount(e.target.value)
@@ -137,12 +175,14 @@ export default function CreateTransactionDialog({
           )}
 
           <TextField
-            label="Amount"
+            required
+            label="Số tiền"
             type="number"
             value={amount}
             onChange={(e) =>
               setAmount(e.target.value)
             }
+            inputProps={{ min: 0.01, step: 0.01 }}
           />
 
         </Stack>
@@ -150,14 +190,14 @@ export default function CreateTransactionDialog({
 
       <DialogActions>
         <Button onClick={onClose}>
-          Cancel
+          Hủy
         </Button>
 
         <Button
           variant="contained"
           onClick={handleSubmit}
         >
-          Submit
+          Xác nhận
         </Button>
       </DialogActions>
     </Dialog>

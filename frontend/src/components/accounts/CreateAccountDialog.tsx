@@ -66,13 +66,13 @@ export default function CreateAccountDialog({
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Create New Account</DialogTitle>
+        <DialogTitle>Tạo tài khoản mới</DialogTitle>
 
         <DialogContent>
           <Stack spacing={3} mt={2}>
             <TextField
               select
-              label="Account Type"
+              label="Loại tài khoản"
               value={accountType}
               onChange={(e) =>
                 setAccountType(e.target.value as AccountType)
@@ -80,11 +80,11 @@ export default function CreateAccountDialog({
               fullWidth
             >
               <MenuItem value="SAVINGS">
-                Savings
+                Tiết kiệm
               </MenuItem>
 
             <MenuItem value="CHECKING">
-              Checking
+              Thanh toán
               </MenuItem>
             </TextField>
           </Stack>
@@ -92,7 +92,7 @@ export default function CreateAccountDialog({
 
         <DialogActions>
           <Button onClick={onClose}>
-            Cancel
+            Hủy
           </Button>
 
           <Button
@@ -100,7 +100,7 @@ export default function CreateAccountDialog({
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Creating..." : "Create Account"}
+            {loading ? "Đang tạo..." : "Tạo tài khoản"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -111,7 +111,7 @@ export default function CreateAccountDialog({
         onClose={() => setSuccess(false)}
       >
         <Alert severity="success" sx={{ width: "100%" }}>
-          Account Created Successfully
+          Tạo tài khoản thành công
         </Alert>
       </Snackbar>
 
@@ -121,7 +121,7 @@ export default function CreateAccountDialog({
         onClose={() => setError(false)}
       >
         <Alert severity="error" sx={{ width: "100%" }}>
-          Failed to Create Account
+          Tạo tài khoản thất bại
         </Alert>
       </Snackbar>
     </>

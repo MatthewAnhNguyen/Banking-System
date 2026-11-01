@@ -36,7 +36,7 @@ export default function Transactions() {
         fontWeight={700}
         mb={3}
       >
-        Transactions
+        Giao dịch
       </Typography>
 
       <TransactionCards

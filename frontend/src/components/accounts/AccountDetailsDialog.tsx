@@ -32,7 +32,7 @@ export default function AccountDetailsDialog({
       maxWidth="sm"
     >
       <DialogTitle>
-        Account Details
+        Chi tiết tài khoản
       </DialogTitle>
 
       <DialogContent>
@@ -40,21 +40,21 @@ export default function AccountDetailsDialog({
         <Stack spacing={2} mt={1}>
 
           <Typography>
-            <b>Account Number:</b> {account.accountNumber}
+            <b>Số tài khoản:</b> {account.accountNumber}
           </Typography>
 
           <Divider />
 
           <Typography>
-            <b>Account Type:</b> {account.accountType}
+            <b>Loại tài khoản:</b> {account.accountType}
           </Typography>
 
           <Typography>
-            <b>Balance:</b> {account.balance.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+            <b>Số dư:</b> {account.balance.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
           </Typography>
 
           <Typography>
-            <b>Status:</b> {account.status}
+            <b>Trạng thái:</b> {account.status}
           </Typography>
 
         </Stack>
@@ -67,7 +67,7 @@ export default function AccountDetailsDialog({
           variant="contained"
           onClick={onClose}
         >
-          Close
+          Đóng
         </Button>
 
       </DialogActions>

@@ -46,11 +46,11 @@ export default function TransactionTable() {
   return (
     <Paper elevation={4} sx={{ mt: 4, p: 3, borderRadius: 4 }}>
       <Typography variant="h6" fontWeight="bold" mb={3}>
-        Recent Transactions
+        Giao dịch gần đây
       </Typography>
       <TextField
         fullWidth
-        placeholder="Search transaction ID, type or account number"
+        placeholder="Tìm kiếm mã giao dịch, loại hoặc số tài khoản"
         value={search}
         onChange={(event) => {
           setSearch(event.target.value);
@@ -61,12 +61,12 @@ export default function TransactionTable() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Transaction ID</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell>Amount</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Accounts</TableCell>
+            <TableCell>Mã giao dịch</TableCell>
+            <TableCell>Ngày</TableCell>
+            <TableCell>Loại giao dịch</TableCell>
+            <TableCell>Số tiền</TableCell>
+            <TableCell>Trạng thái</TableCell>
+            <TableCell>Tài khoản</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

@@ -20,17 +20,17 @@ const drawerWidth = 260;
 
 const menuItems = [
   {
-    text: "Dashboard",
+    text: "Tổng quan",
     icon: <Dashboard />,
     path: "/dashboard",
   },
   {
-    text: "Accounts",
+    text: "Tài khoản",
     icon: <AccountBalanceWallet />,
     path: "/accounts",
   },
   {
-    text: "Transactions",
+    text: "Giao dịch",
     icon: <ReceiptLong />,
     path: "/transactions",
   },
@@ -95,7 +95,7 @@ export default function Sidebar() {
             <ListItemIcon sx={{ color: "#EF4444" }}>
               <Logout />
             </ListItemIcon>
-            <ListItemText primary="Logout" />
+            <ListItemText primary="Đăng xuất" />
           </ListItemButton>
         </List>
       </Box>

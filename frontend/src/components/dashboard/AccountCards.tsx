@@ -27,7 +27,7 @@ export default function AccountCards() {
   if (accounts.length === 0) {
     return (
       <Typography>
-        No Accounts Found
+        Không tìm thấy tài khoản nào
       </Typography>
     );
   }

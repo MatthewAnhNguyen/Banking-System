@@ -39,7 +39,7 @@ export default function AdminDashboard() {
       });
     } catch (loadError) {
       console.error("Failed to load admin dashboard:", loadError);
-      setError("Unable to load dashboard data. Please try again.");
+      setError("Không thể tải dữ liệu bảng điều khiển. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
         mb={3}
       >
         <Typography variant="h4" fontWeight="bold">
-          Admin Dashboard
+          Bảng điều khiển quản trị
         </Typography>
         <Button
           variant="contained"
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
           onClick={() => void loadDashboard()}
           disabled={loading}
         >
-          Refresh
+          Làm mới
         </Button>
       </Box>
 
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
         <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
           <Card sx={{ flex: 1 }}>
             <CardContent>
-              <Typography color="text.secondary">Total Users</Typography>
+              <Typography color="text.secondary">Tổng số người dùng</Typography>
               <Typography variant="h4" fontWeight="bold">
                 {summary?.totalUsers.toLocaleString() ?? "--"}
               </Typography>
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
           </Card>
           <Card sx={{ flex: 1 }}>
             <CardContent>
-              <Typography color="text.secondary">Total Accounts</Typography>
+              <Typography color="text.secondary">Tổng số tài khoản</Typography>
               <Typography variant="h4" fontWeight="bold">
                 {summary?.totalAccounts.toLocaleString() ?? "--"}
               </Typography>

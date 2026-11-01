@@ -64,7 +64,7 @@ export default function AccountCard({
         mt={3}
         color="rgba(255,255,255,.7)"
       >
-        Available Balance
+        Số dư khả dụng
       </Typography>
 
       <Typography

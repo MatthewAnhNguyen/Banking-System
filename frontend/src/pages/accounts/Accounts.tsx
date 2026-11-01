@@ -29,7 +29,6 @@ export default function Accounts() {
 
   return (
     <Box sx={{ px: 3, py: 2 }}>
-      {/* Header */}
       <Box
         display="flex"
         justifyContent="space-between"
@@ -37,7 +36,7 @@ export default function Accounts() {
         mb={3}
       >
         <Typography variant="h4" fontWeight={700}>
-          My Accounts
+          Tài khoản của tôi
         </Typography>
 
         <Button
@@ -45,14 +44,12 @@ export default function Accounts() {
           size="large"
           onClick={() => setOpenCreate(true)}
         >
-          + Create Account
+          + Tạo tài khoản
         </Button>
       </Box>
 
-      {/* Summary Cards */}
       <AccountSummary accounts={accounts} />
 
-      {/* Search & Filter */}
       <Box
         display="flex"
         gap={2}
@@ -74,16 +71,14 @@ export default function Accounts() {
         </Box>
       </Box>
 
-      {/* Accounts Grid */}
       {loading ? (
-        <Typography>Loading...</Typography>
+        <Typography>Đang tải...</Typography>
       ) : filteredAccounts.length === 0 ? (
-        <Typography>No accounts found.</Typography>
+        <Typography>Không tìm thấy tài khoản</Typography>
       ) : (
         <AccountsGrid accounts={filteredAccounts} />
       )}
 
-      {/* Create Account Dialog */}
    <CreateAccountDialog
   open={openCreate}
   onClose={() => setOpenCreate(false)}

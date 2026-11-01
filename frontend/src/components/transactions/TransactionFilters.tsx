@@ -34,8 +34,8 @@ export default function TransactionFilters({
         flexWrap="wrap"
       >
         <TextField
-          label="Search"
-          placeholder="Search by account number or transaction type..."
+          label="Tìm kiếm"
+          placeholder="Tìm kiếm theo số tài khoản hoặc loại giao dịch..."
           value={search}
           onChange={(e) =>
             setSearch(e.target.value)
@@ -45,7 +45,7 @@ export default function TransactionFilters({
 
         <TextField
           select
-          label="Transaction Type"
+          label="Loại giao dịch"
           value={type}
           onChange={(e) =>
             setType(e.target.value)
@@ -54,19 +54,19 @@ export default function TransactionFilters({
           sx={{ minWidth: 220 }}
         >
           <MenuItem value="">
-            All Transactions
+            Tất cả giao dịch
           </MenuItem>
 
           <MenuItem value="DEPOSIT">
-            Deposit
+            Nạp tiền
           </MenuItem>
 
           <MenuItem value="WITHDRAWAL">
-            Withdraw
+            Rút tiền
           </MenuItem>
 
           <MenuItem value="TRANSFER">
-            Transfer
+            Chuyển khoản
           </MenuItem>
 
         </TextField>
@@ -76,7 +76,7 @@ export default function TransactionFilters({
         variant="contained"
         onClick={onNewTransaction}
       >
-        New Transaction
+        Giao dịch mới
       </Button>
     </Box>
   );
