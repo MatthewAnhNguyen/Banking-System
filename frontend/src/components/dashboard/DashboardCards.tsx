@@ -36,7 +36,7 @@ export default function DashboardCards() {
   const cards = [
     {
       label: "Total Balance",
-      value: `₹ ${dashboard.totalBalance.toLocaleString("en-IN")}`,
+      value: dashboard.totalBalance.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
       icon: <Savings color="success" />,
     },
     {

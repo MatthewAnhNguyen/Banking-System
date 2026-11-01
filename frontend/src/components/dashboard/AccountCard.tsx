@@ -71,7 +71,7 @@ export default function AccountCard({
         variant="h4"
         fontWeight="bold"
       >
-        ₹ {account.balance.toLocaleString("en-IN")}
+        {account.balance.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
       </Typography>
     </Paper>
   );

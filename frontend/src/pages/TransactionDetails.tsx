@@ -51,7 +51,7 @@ export default function TransactionDetails() {
     ["Transaction Type", transaction?.transactionType ?? "-"],
     [
       "Amount",
-      transaction ? `₹ ${transaction.amount.toLocaleString("en-IN")}` : "-",
+      transaction ? transaction.amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" }) : "-",
     ],
     [
       "Transaction Date",

@@ -16,7 +16,7 @@ export const generateReceipt = (transaction: Transaction) => {
     body: [
       ["Transaction ID", String(transaction.id)],
       ["Transaction Type", transaction.transactionType],
-      ["Amount", `₹ ${transaction.amount}`],
+      ["Amount", Number(transaction.amount).toLocaleString("vi-VN", { style: "currency", currency: "VND" })],
       ["Date", transaction.transactionDate],
       ["Source Account", transaction.sourceAccountNumber ?? "-"],
       ["Target Account", transaction.targetAccountNumber ?? "-"],

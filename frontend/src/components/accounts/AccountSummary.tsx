@@ -41,7 +41,7 @@ export default function AccountSummary({ accounts }: Props) {
     },
     {
       title: "Total Balance",
-      value: `₹ ${totalBalance.toLocaleString("en-IN")}`,
+      value: totalBalance.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
     },
   ];
 
