@@ -44,13 +44,13 @@ export default function AccountCard({
         <CreditCardIcon sx={{ fontSize: 40 }} />
 
         <Chip
-          label={account.status}
-          color="success"
+          label={account.status === "ACTIVE" ? "Hoạt động" : "Bị vô hiệu hóa"}
+          color={account.status === "ACTIVE" ? "success" : "error"}
         />
       </Box>
 
-      <Typography mt={3}>
-        {account.accountType}
+      <Typography mt={3} sx={{ letterSpacing: 1, fontWeight: 500 }}>
+        {account.accountType === "SAVINGS" ? "TIẾT KIỆM" : "THANH TOÁN"}
       </Typography>
 
       <Typography
