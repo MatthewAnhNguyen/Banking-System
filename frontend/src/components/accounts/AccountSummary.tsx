@@ -28,19 +28,19 @@ export default function AccountSummary({ accounts }: Props) {
 
   const cards = [
     {
-      title: "Total Accounts",
+      title: "Tổng số tài khoản",
       value: totalAccounts,
     },
     {
-      title: "Savings Accounts",
+      title: "Tài khoản tiết kiệm",
       value: savingsAccounts,
     },
     {
-      title: "Checking Accounts",
+      title: "Tài khoản thanh toán",
       value: checkingAccounts,
     },
     {
-      title: "Total Balance",
+      title: "Tổng số dư",
       value: totalBalance.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
     },
   ];

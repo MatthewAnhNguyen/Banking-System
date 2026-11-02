@@ -44,40 +44,59 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponse transfer(TransferRequest request) {
-        if (request.sourceAccountNumber().equals(request.targetAccountNumber())) {
-            throw new BusinessRuleException("Tài khoản nguồn và đích không được trùng nhau");
+        String sourceNumber = request.sourceAccountNumber().trim();
+        String targetNumber = request.targetAccountNumber().trim();
+
+        if (sourceNumber.equals(targetNumber)) {
+            throw new BusinessRuleException(
+                    "Tài khoản nguồn và đích không được trùng nhau");
         }
 
-        Account sourceRef = accountRepository.findByAccountNumber(request.sourceAccountNumber())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản nguồn"));
-        Account targetRef = accountRepository.findByAccountNumber(request.targetAccountNumber())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản đích"));
+        Account sourceRef = accountRepository.findByAccountNumber(sourceNumber)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài khoản nguồn"));
+
+        Account targetRef = accountRepository.findByAccountNumber(targetNumber)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài khoản đích"));
 
         Long firstId = Math.min(sourceRef.getId(), targetRef.getId());
         Long secondId = Math.max(sourceRef.getId(), targetRef.getId());
+
         Account first = lock(firstId);
         Account second = lock(secondId);
 
-        Account source = first.getId().equals(sourceRef.getId()) ? first : second;
-        Account target = first.getId().equals(targetRef.getId()) ? first : second;
+        Account source = first.getId().equals(sourceRef.getId())
+                ? first
+                : second;
+
+        Account target = first.getId().equals(targetRef.getId())
+                ? first
+                : second;
 
         if (!source.getUser().getId().equals(accountService.currentUserId())) {
-            throw new ResourceNotFoundException("Không tìm thấy tài khoản nguồn");
+            throw new ResourceNotFoundException(
+                    "Không tìm thấy tài khoản nguồn");
         }
+
         ensureActive(source);
         ensureActive(target);
         ensureSufficientBalance(source, request.amount());
 
         source.setBalance(source.getBalance().subtract(request.amount()));
         target.setBalance(target.getBalance().add(request.amount()));
-        return save(TransactionType.TRANSFER, request.amount(), source, target);
+
+        return save(
+                TransactionType.TRANSFER,
+                request.amount(),
+                source,
+                target);
     }
 
     private Account ownedAccountForUpdate(String accountNumber) {
         return accountRepository.findByNumberAndUserForUpdate(
-                        accountNumber,
-                        accountService.currentUserId()
-                )
+                accountNumber,
+                accountService.currentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản"));
     }
 
@@ -102,8 +121,7 @@ public class TransactionService {
             TransactionType type,
             BigDecimal amount,
             Account source,
-            Account target
-    ) {
+            Account target) {
         Transaction transaction = new Transaction();
         transaction.setTransactionType(type);
         transaction.setAmount(amount);
@@ -120,9 +138,10 @@ public class TransactionService {
                 transaction.getTransactionDate(),
                 transaction.getStatus(),
                 transaction.getSourceAccount() == null
-                        ? null : transaction.getSourceAccount().getAccountNumber(),
+                        ? null
+                        : transaction.getSourceAccount().getAccountNumber(),
                 transaction.getTargetAccount() == null
-                        ? null : transaction.getTargetAccount().getAccountNumber()
-        );
+                        ? null
+                        : transaction.getTargetAccount().getAccountNumber());
     }
 }

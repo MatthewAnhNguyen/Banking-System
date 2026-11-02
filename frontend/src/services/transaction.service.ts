@@ -34,3 +34,10 @@ export async function transferMoney(
   );
   return response.data;
 }
+
+export const getTransactionByReference = async (
+  transactionId: number
+): Promise<Transaction> => {
+  const response = await api.get<Transaction>(`/history/${transactionId}`);
+  return response.data;
+};

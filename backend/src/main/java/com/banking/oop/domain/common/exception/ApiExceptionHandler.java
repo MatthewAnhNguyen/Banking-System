@@ -66,6 +66,7 @@ public class ApiExceptionHandler {
         body.put("timestamp", Instant.now());
         body.put("status", status.value());
         body.put("error", message);
+        body.put("message", message);
         body.put("path", request.getRequestURI());
         return ResponseEntity.status(status).body(body);
     }

@@ -25,19 +25,19 @@ export default function TransactionCards({
 
   const cards = [
     {
-      title: "Total Transactions",
+      title: "Tổng số giao dịch",
       value: totalTransactions,
     },
     {
-      title: "Deposits",
+      title: "Tiền gửi",
       value: deposits,
     },
     {
-      title: "Withdrawals",
+      title: "Rút tiền",
       value: withdrawals,
     },
     {
-      title: "Transfers",
+      title: "Chuyển khoản",
       value: transfers,
     },
   ];

@@ -12,31 +12,31 @@ import {
 const transactions = [
   {
     id: "TXN1001",
-    type: "Deposit",
+    type: "Nạp tiền",
     amount: "50.000 ₫",
-    status: "SUCCESS",
-    date: "16 Jul 2026",
+    status: "THÀNH CÔNG",
+    date: "16/07/2026",
   },
   {
     id: "TXN1002",
-    type: "Transfer",
+    type: "Chuyển khoản",
     amount: "10.000 ₫",
-    status: "SUCCESS",
-    date: "15 Jul 2026",
+    status: "THÀNH CÔNG",
+    date: "15/07/2026",
   },
   {
     id: "TXN1003",
-    type: "Withdraw",
+    type: "Rút tiền",
     amount: "5.000 ₫",
-    status: "PENDING",
-    date: "15 Jul 2026",
+    status: "CHỜ XỬ LÝ",
+    date: "15/07/2026",
   },
   {
     id: "TXN1004",
-    type: "Transfer",
+    type: "Chuyển khoản",
     amount: "20.000 ₫",
-    status: "FAILED",
-    date: "14 Jul 2026",
+    status: "THẤT BẠI",
+    date: "14/07/2026",
   },
 ];
 
@@ -54,7 +54,7 @@ export default function RecentTransactions() {
         fontWeight="bold"
         mb={2}
       >
-        Recent Transactions
+        Giao dịch gần đây
       </Typography>
 
       <Table>
@@ -65,13 +65,13 @@ export default function RecentTransactions() {
 
             <TableCell>ID</TableCell>
 
-            <TableCell>Date</TableCell>
+            <TableCell>Ngày</TableCell>
 
-            <TableCell>Type</TableCell>
+            <TableCell>Loại giao dịch</TableCell>
 
-            <TableCell>Amount</TableCell>
+            <TableCell>Số tiền</TableCell>
 
-            <TableCell>Status</TableCell>
+            <TableCell>Trạng thái</TableCell>
 
           </TableRow>
 
@@ -96,9 +96,9 @@ export default function RecentTransactions() {
                 <Chip
                   label={txn.status}
                   color={
-                    txn.status === "SUCCESS"
+                    txn.status === "THÀNH CÔNG"
                       ? "success"
-                      : txn.status === "PENDING"
+                      : txn.status === "CHỜ XỬ LÝ"
                       ? "warning"
                       : "error"
                   }

@@ -24,12 +24,12 @@ export default function Sidebar() {
   const isAdmin = getRole() === "ADMIN";
 
   const links = [
-    { label: "Dashboard", to: "/dashboard", icon: <DashboardIcon /> },
-    { label: "Accounts", to: "/accounts", icon: <AccountBalanceIcon /> },
-    { label: "Transactions", to: "/transactions", icon: <ReceiptLongIcon /> },
+    { label: "Tổng quan", to: "/dashboard", icon: <DashboardIcon /> },
+    { label: "Tài khoản", to: "/accounts", icon: <AccountBalanceIcon /> },
+    { label: "Giao dịch", to: "/transactions", icon: <ReceiptLongIcon /> },
     ...(isAdmin
       ? [{
-          label: "Administration",
+          label: "Quản trị",
           to: "/admin",
           icon: <AdminPanelSettingsIcon />,
         }]
@@ -50,7 +50,7 @@ export default function Sidebar() {
     >
       <Toolbar>
         <Typography variant="h6" fontWeight={700}>
-          Banking
+          Ngân hàng
         </Typography>
       </Toolbar>
 
@@ -78,7 +78,7 @@ export default function Sidebar() {
               navigate("/", { replace: true });
             }}
           >
-            Log out
+            Đăng xuất
           </Button>
         </Box>
       </Box>

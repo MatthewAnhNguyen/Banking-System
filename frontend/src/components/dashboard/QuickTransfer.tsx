@@ -32,7 +32,7 @@ export default function QuickTransfer() {
         if (!ignore) setAccounts(accountsData);
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load accounts");
+        toast.error("Không thể tải danh sách tài khoản");
       }
     }
 
@@ -45,17 +45,17 @@ export default function QuickTransfer() {
 
   const handleTransfer = async () => {
   if (!fromAccountId) {
-    toast.error("Select From Account");
+    toast.error("Vui lòng chọn tài khoản nguồn");
     return;
   }
 
   if (!targetAccountNumber.trim()) {
-    toast.error("Enter the destination account number");
+    toast.error("Vui lòng nhập số tài khoản đích");
     return;
   }
 
   if (!amount || Number(amount) <= 0) {
-    toast.error("Enter a valid amount");
+    toast.error("Vui lòng nhập số tiền hợp lệ");
     return;
   }
 
@@ -68,7 +68,7 @@ export default function QuickTransfer() {
       amount: Number(amount),
     });
 
-    toast.success("Transfer Successful");
+    toast.success("Chuyển tiền thành công");
 
     setTargetAccountNumber("");
     setAmount("");
@@ -81,11 +81,13 @@ export default function QuickTransfer() {
 
     toast.error(
       error.response?.data?.message ??
-      "Transfer Failed"
+      "Chuyển tiền thất bại"
     );
   } else {
-    toast.error("Transfer Failed");
+    toast.error("Chuyển tiền thất bại");
   }
+} finally {
+    setLoading(false);
 }
 };
 
@@ -103,13 +105,13 @@ export default function QuickTransfer() {
         fontWeight="bold"
         mb={3}
       >
-        Quick Money Transfer
+        Chuyển tiền nhanh
       </Typography>
 
       <Stack spacing={3}>
         <TextField
           select
-          label="From Account"
+          label="Tài khoản nguồn"
           fullWidth
           value={fromAccountId}
           onChange={(e) =>
@@ -127,14 +129,14 @@ export default function QuickTransfer() {
         </TextField>
 
         <TextField
-          label="Destination Account Number"
+          label="Số tài khoản đích"
           fullWidth
           value={targetAccountNumber}
           onChange={(e) => setTargetAccountNumber(e.target.value)}
         />
 
         <TextField
-          label="Amount"
+          label="Số tiền"
           type="number"
           fullWidth
           value={amount}
@@ -155,7 +157,7 @@ export default function QuickTransfer() {
               color="inherit"
             />
           ) : (
-            "Transfer Money"
+            "Chuyển tiền"
           )}
         </Button>
       </Stack>

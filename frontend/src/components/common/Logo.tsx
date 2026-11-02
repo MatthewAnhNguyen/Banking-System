@@ -19,7 +19,7 @@ export default function Logo() {
         align="center"
         mt={2}
       >
-        Enterprise Bank
+        Bankkk
       </Typography>
     </>
   );

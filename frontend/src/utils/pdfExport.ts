@@ -24,6 +24,7 @@ export const exportAnalyticsPDF = (
   doc.text(`Monthly Expense : ${summary.monthlyExpense.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`, 14, 65);
   doc.text(`Savings : ${summary.savings.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`, 14, 75);
   doc.text(`Transactions : ${summary.totalTransactions}`, 14, 85);
+
   autoTable(doc, {
     startY: 95,
     head: [["Transaction", "Amount", "Date"]],

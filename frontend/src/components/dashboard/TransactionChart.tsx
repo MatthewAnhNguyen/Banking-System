@@ -14,12 +14,12 @@ import {
 } from "recharts";
 
 const data = [
-  { month: "Jan", deposit: 12000, withdraw: 8000 },
-  { month: "Feb", deposit: 18000, withdraw: 9000 },
-  { month: "Mar", deposit: 25000, withdraw: 15000 },
-  { month: "Apr", deposit: 22000, withdraw: 12000 },
-  { month: "May", deposit: 30000, withdraw: 18000 },
-  { month: "Jun", deposit: 42000, withdraw: 20000 },
+  { month: "Tháng 1", deposit: 12000, withdraw: 8000 },
+  { month: "Tháng 2", deposit: 18000, withdraw: 9000 },
+  { month: "Tháng 3", deposit: 25000, withdraw: 15000 },
+  { month: "Tháng 4", deposit: 22000, withdraw: 12000 },
+  { month: "Tháng 5", deposit: 30000, withdraw: 18000 },
+  { month: "Tháng 6", deposit: 42000, withdraw: 20000 },
 ];
 
 export default function TransactionChart() {
@@ -36,7 +36,7 @@ export default function TransactionChart() {
         fontWeight="bold"
         mb={2}
       >
-        Monthly Banking Analytics
+        Thống kê ngân hàng hàng tháng
       </Typography>
 
       <ResponsiveContainer
@@ -56,6 +56,7 @@ export default function TransactionChart() {
           <Line
             type="monotone"
             dataKey="deposit"
+            name="Tiền gửi"
             stroke="#2563EB"
             strokeWidth={3}
           />
@@ -63,6 +64,7 @@ export default function TransactionChart() {
           <Line
             type="monotone"
             dataKey="withdraw"
+            name="Rút tiền"
             stroke="#DC2626"
             strokeWidth={3}
           />
